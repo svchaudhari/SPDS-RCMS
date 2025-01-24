@@ -1,5 +1,3 @@
-
-
 #!/bin/sh
 
 if [ -z "$1" ]; then
@@ -9,12 +7,14 @@ else
 fi
 
 if [ -f "${FOLDER}pom.xml" ]; then
-    cat ${FOLDER}pom.xml | oq -i xml -r '.project.version' | cut -d'-' -f1
+    # Extract the version using grep and sed
+    grep -oPm2 "(?<=<version>)[^<]+" "${FOLDER}pom.xml" | tail -n 1 | cut -d'-' -f1
 elif [ -f "${FOLDER}package.json" ]; then
     VERSION=$(sed -n 's/.*"version": "\(.*\)",/\1/p' ${FOLDER}package.json)
     echo $VERSION
 elif [ -f "${FOLDER}VERSION" ]; then
-    cat ${FOLDER}VERSION
+    # Simply output the content of the VERSION file
+    cat "${FOLDER}VERSION"
 else
     echo "NA"
 fi
